@@ -1,0 +1,25 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<footer class="ft">
+  <div class="container">
+    <p>{text}</p>
+    <slot />
+  </div>
+</footer>
+
+<style>
+  .ft {
+    padding-block: 32px;
+    background: var(--c-ink);
+    color: var(--c-on-dark-2);
+    text-align: center;
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+  }
+</style>

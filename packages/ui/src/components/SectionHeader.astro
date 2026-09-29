@@ -1,0 +1,50 @@
+---
+import { rich } from '../lib/rich';
+
+interface Props {
+  title: string;
+  /** Parágrafos de apoio abaixo do título. */
+  intro?: string[];
+  align?: 'center' | 'left';
+  id?: string;
+  class?: string;
+}
+
+const { title, intro = [], align = 'center', id, class: className } = Astro.props;
+---
+
+<header class:list={['sh', `sh--${align}`, 'reveal', className]}>
+  <slot name="before" />
+  <h2 id={id} set:html={rich(title)} />
+  {intro.map((p) => <p set:html={rich(p)} />)}
+</header>
+
+<style>
+  .sh {
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+    margin-bottom: clamp(32px, 2rem + 1.5vw, 56px);
+  }
+
+  .sh--center {
+    margin-inline: auto;
+    text-align: center;
+    justify-items: center;
+  }
+
+  h2 {
+    font-size: var(--fs-h2);
+    color: inherit;
+  }
+
+  p {
+    font-size: var(--fs-lg);
+    color: var(--c-muted);
+    line-height: 1.65;
+  }
+
+  :global(.section--dark) p {
+    color: var(--c-on-dark-2);
+  }
+</style>

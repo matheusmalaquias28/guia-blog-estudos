@@ -1,0 +1,64 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Caminho de imagem de compartilhamento (public/ ou URL absoluta). */
+  ogImage?: string;
+  themeColor?: string;
+  lang?: string;
+}
+
+const { title, description, ogImage, themeColor = '#0a0d12', lang = 'pt-BR' } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const ogImageUrl = ogImage && Astro.site ? new URL(ogImage, Astro.site).href : ogImage;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content={themeColor} />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+
+    <Font cssVariable="--font-manrope" preload />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+
+    <!-- Repassa UTMs/parâmetros de campanha da URL para os links de checkout. -->
+    <script is:inline>
+      (function () {
+        var q = location.search;
+        if (!q) return;
+        var p = new URLSearchParams(q);
+        document.querySelectorAll('a[data-checkout]').forEach(function (a) {
+          try {
+            var u = new URL(a.href);
+            p.forEach(function (v, k) {
+              if (!u.searchParams.has(k)) u.searchParams.set(k, v);
+            });
+            a.href = u.toString();
+          } catch (e) {}
+        });
+      })();
+    </script>
+    <slot name="end" />
+  </body>
+</html>

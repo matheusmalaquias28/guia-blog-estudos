@@ -1,0 +1,124 @@
+---
+import { rich } from '../lib/rich';
+
+interface Props {
+  title: string;
+  paragraphs: string[];
+  /** Número exibido no selo (ex.: 7). */
+  days: number;
+  id?: string;
+}
+
+const { title, paragraphs, days, id } = Astro.props;
+
+// Selo serrilhado: estrela de 28 pontas alternando raio externo/interno.
+const sealPoints = Array.from({ length: 56 }, (_, i) => {
+  const r = i % 2 === 0 ? 57 : 51;
+  const a = (i / 56) * Math.PI * 2 - Math.PI / 2;
+  return `${(60 + r * Math.cos(a)).toFixed(2)},${(60 + r * Math.sin(a)).toFixed(2)}`;
+}).join(' ');
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <div class="g reveal">
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 120 120" width="120" height="120">
+          <defs>
+            <linearGradient id="seal-g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22c55e" />
+              <stop offset="1" stop-color="#15803d" />
+            </linearGradient>
+          </defs>
+          <polygon fill="url(#seal-g)" stroke="url(#seal-g)" stroke-width="3" stroke-linejoin="round" points={sealPoints}></polygon>
+          <circle cx="60" cy="60" r="40" fill="none" stroke="rgb(255 255 255 / .45)" stroke-width="1.5" stroke-dasharray="3 4"></circle>
+        </svg>
+        <span class="seal__txt">
+          <strong>{days}</strong>
+          <small>dias</small>
+        </span>
+      </div>
+      <div class="g__copy">
+        <h2 id={`${id}-title`} set:html={rich(title)} />
+        {paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .g {
+    display: grid;
+    justify-items: center;
+    gap: 24px;
+    max-width: 880px;
+    margin-inline: auto;
+    padding: clamp(28px, 4vw, 48px);
+    text-align: center;
+    background: linear-gradient(180deg, #fff, #fbfcfa);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .seal {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex: none;
+    filter: drop-shadow(0 12px 18px rgb(var(--c-cta-ring) / 0.35));
+  }
+
+  .seal svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+
+  .seal__txt {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    color: #fff;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .seal__txt strong {
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .seal__txt small {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .g__copy {
+    display: grid;
+    gap: 12px;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  }
+
+  p {
+    color: var(--c-muted);
+    font-size: var(--fs-base);
+    line-height: 1.7;
+  }
+
+  @media (min-width: 760px) {
+    .g {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 40px;
+      text-align: left;
+    }
+  }
+</style>

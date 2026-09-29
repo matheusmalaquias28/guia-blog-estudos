@@ -1,0 +1,128 @@
+---
+import CtaButton from '../components/CtaButton.astro';
+import Icon from '../components/Icon.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import type { Cta, Step } from '../types';
+
+interface Props {
+  title: string;
+  steps: Step[];
+  cta?: Cta;
+  id?: string;
+}
+
+const { title, steps, cta, id } = Astro.props;
+---
+
+<section class="section section--soft" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <SectionHeader title={title} id={`${id}-title`} />
+
+    <ol class="steps" role="list">
+      {
+        steps.map((s, i) => (
+          <li class="step reveal">
+            <div class="step__top">
+              <span class="step__icon">
+                <Icon name={s.icon} size={22} />
+              </span>
+              <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      cta && (
+        <div class="steps__cta reveal">
+          <CtaButton href={cta.href}>{cta.label}</CtaButton>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .steps {
+    display: grid;
+    gap: 16px;
+    counter-reset: step;
+  }
+
+  @media (min-width: 640px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 24px 22px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .step__icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--c-ink);
+    color: var(--c-cta-hi);
+  }
+
+  .step__num {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #7b8494;
+    opacity: 0.9;
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: var(--fs-h3);
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    font-size: var(--fs-sm);
+    color: var(--c-muted);
+    line-height: 1.65;
+  }
+
+  .steps__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(32px, 4vw, 48px);
+  }
+
+  @media (max-width: 599px) {
+    .steps__cta :global(.cta) {
+      width: 100%;
+    }
+  }
+</style>

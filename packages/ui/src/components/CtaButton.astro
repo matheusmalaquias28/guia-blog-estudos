@@ -1,0 +1,150 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  /** full = ocupa 100% da largura em qualquer tela */
+  block?: boolean;
+  size?: 'md' | 'lg';
+  /** Marca o link como checkout (recebe os parâmetros UTM da URL atual). */
+  checkout?: boolean;
+  class?: string;
+}
+
+const { href, block = false, size = 'lg', checkout = false, class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['cta', `cta--${size}`, { 'cta--block': block }, className]}
+  data-checkout={checkout ? '' : undefined}
+>
+  <span class="cta__shine" aria-hidden="true"></span>
+  <span class="cta__label"><slot /></span>
+  <Icon name="arrowRight" size={20} stroke={2.5} class="cta__icon" />
+</a>
+
+<style>
+  .cta {
+    --_ring: var(--c-cta-ring);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 100%;
+    padding: 18px 28px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--c-cta-hi) 0%, var(--c-cta) 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: clamp(0.9375rem, 0.88rem + 0.25vw, 1.0625rem);
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.28),
+      inset 0 -2px 0 rgb(0 0 0 / 0.12),
+      0 10px 24px -8px rgb(var(--_ring) / 0.6);
+    transition:
+      transform 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out),
+      filter 0.25s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cta--md {
+    padding: 15px 22px;
+    font-size: 0.9375rem;
+  }
+
+  .cta--block {
+    display: flex;
+    width: 100%;
+  }
+
+  /* Pulso sutil: anel que expande (transform + opacity = só compositor, zero repaint) */
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: 0 0 0 2px rgb(var(--_ring) / 0.55);
+    opacity: 0;
+    animation: cta-pulse 2.6s var(--ease-out) infinite;
+  }
+
+  .cta__shine {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .cta__shine::after {
+    content: '';
+    position: absolute;
+    inset: -2px 0;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.38), transparent);
+    transform: translateX(-160%) skewX(-18deg);
+    animation: cta-shine 4.2s ease-in-out infinite;
+    animation-delay: 1.2s;
+  }
+
+  .cta__label {
+    position: relative;
+  }
+
+  .cta :global(.cta__icon) {
+    position: relative;
+    flex: none;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .cta:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05) saturate(1.05);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.3),
+        inset 0 -2px 0 rgb(0 0 0 / 0.12),
+        0 16px 32px -10px rgb(var(--_ring) / 0.75);
+    }
+
+    .cta:hover :global(.cta__icon) {
+      transform: translateX(4px);
+    }
+  }
+
+  .cta:active {
+    transform: translateY(0) scale(0.985);
+  }
+
+  @keyframes cta-pulse {
+    0% {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.06, 1.22);
+    }
+  }
+
+  @keyframes cta-shine {
+    0%,
+    55% {
+      transform: translateX(-160%) skewX(-18deg);
+    }
+    85%,
+    100% {
+      transform: translateX(330%) skewX(-18deg);
+    }
+  }
+</style>

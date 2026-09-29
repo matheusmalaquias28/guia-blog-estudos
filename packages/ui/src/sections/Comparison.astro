@@ -1,0 +1,191 @@
+---
+import Icon from '../components/Icon.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import type { Img } from '../types';
+
+interface Side {
+  title: string;
+  items: string[];
+}
+
+interface Props {
+  title: string;
+  bad: Side;
+  good: Side;
+  /** Imagem opcional entre o título e os cards. */
+  image?: Img;
+  id?: string;
+}
+
+const { title, bad, good, image, id } = Astro.props;
+---
+
+<section class="section section--soft" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <SectionHeader title={title} id={`${id}-title`} />
+    {
+      image && (
+        <div class="cmp__media reveal">
+          <ImageSlot
+            src={image.src}
+            alt={image.alt}
+            hint={image.hint}
+            ratio={image.src ? `${image.src.width} / ${image.src.height}` : '16 / 9'}
+            sizes="(min-width: 1060px) 980px, 92vw"
+            widths={[480, 720, 980, 1280, 1672]}
+          />
+        </div>
+      )
+    }
+    <div class="cmp">
+      <article class="side side--bad reveal">
+        <header>
+          <span class="badge"><Icon name="x" size={18} stroke={2.75} /></span>
+          <h3>{bad.title}</h3>
+        </header>
+        <ul role="list">
+          {
+            bad.items.map((i) => (
+              <li>
+                <Icon name="x" size={18} stroke={2.5} class="mk" />
+                <span>{i}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <article class="side side--good reveal">
+        <header>
+          <span class="badge"><Icon name="check" size={18} stroke={2.75} /></span>
+          <h3>{good.title}</h3>
+        </header>
+        <ul role="list">
+          {
+            good.items.map((i) => (
+              <li>
+                <Icon name="check" size={18} stroke={2.75} class="mk" />
+                <span>{i}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cmp__media {
+    max-width: 980px;
+    margin: 0 auto clamp(44px, 5vw, 72px);
+  }
+
+  .cmp__media :global(.slot) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .cmp {
+    display: grid;
+    gap: 16px;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 820px) {
+    .cmp {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      align-items: stretch;
+    }
+  }
+
+  .side {
+    border-radius: var(--radius-lg);
+    padding: clamp(24px, 3vw, 36px);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--_line);
+  }
+
+  h3 {
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  }
+
+  .badge {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+
+  ul {
+    display: grid;
+    gap: 16px;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    align-items: start;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+
+  li :global(.mk) {
+    margin-top: 2px;
+  }
+
+  .side--bad {
+    --_line: var(--c-line);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-sm);
+    color: var(--c-text-2);
+  }
+
+  .side--bad .badge {
+    background: var(--c-danger-soft);
+    color: var(--c-danger);
+  }
+
+  .side--bad :global(.mk) {
+    color: #ef4444;
+  }
+
+  .side--good {
+    --_line: rgb(255 255 255 / 0.1);
+    position: relative;
+    background:
+      radial-gradient(90% 60% at 100% 0%, rgb(var(--c-cta-ring) / 0.16), transparent 70%),
+      var(--c-ink-2);
+    color: var(--c-on-dark);
+    box-shadow:
+      0 0 0 1px rgb(var(--c-cta-ring) / 0.35),
+      var(--shadow-lg);
+  }
+
+  .side--good .badge {
+    background: var(--c-cta);
+    color: #fff;
+  }
+
+  .side--good :global(.mk) {
+    color: var(--c-cta-hi);
+  }
+
+  .side--good li {
+    color: #dfe5ee;
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+/**
+ * Card escuro centralizado: título com destaques, texto em itálico, lista com checks e CTA.
+ * Marcação na copy: *amarelo*, __sublinhado verde__, **ênfase verde**.
+ */
+import CtaButton from '../components/CtaButton.astro';
+import Icon from '../components/Icon.astro';
+import { rich } from '../lib/rich';
+import type { Cta } from '../types';
+
+interface Props {
+  title: string;
+  paragraphs: string[];
+  features?: string[];
+  cta?: Cta;
+  id?: string;
+}
+
+const { title, paragraphs, features = [], cta, id } = Astro.props;
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <div class="fc reveal">
+      <h2 id={`${id}-title`} set:html={rich(title)} />
+
+      <div class="fc__text">
+        {paragraphs.map((p) => <p set:html={rich(p)} />)}
+      </div>
+
+      {
+        features.length > 0 && (
+          <ul class="fc__list" role="list">
+            {features.map((f) => (
+              <li>
+                <span class="tick">
+                  <Icon name="check" size={15} stroke={3} />
+                </span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        cta && (
+          <div class="fc__cta">
+            <CtaButton href={cta.href} block>
+              {cta.label}
+            </CtaButton>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .fc {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: clamp(36px, 6vw, 60px) clamp(22px, 5vw, 56px);
+    text-align: center;
+    color: var(--c-on-dark);
+    border-radius: 28px;
+    background:
+      radial-gradient(80% 50% at 50% 0%, rgb(var(--c-cta-ring) / 0.1), transparent 70%),
+      linear-gradient(180deg, #1d232b 0%, #12171e 100%);
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--c-cta-ring) / 0.22),
+      0 30px 60px -28px rgb(10 13 18 / 0.55);
+  }
+
+  /* Linha verde no topo do card */
+  .fc::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(220px, 45%);
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--c-cta-hi) 20%, var(--c-cta-hi) 80%, transparent);
+    box-shadow: 0 0 18px rgb(var(--c-cta-ring) / 0.7);
+  }
+
+  h2 {
+    font-size: clamp(1.625rem, 1.2rem + 1.8vw, 2.5rem);
+    line-height: 1.25;
+    max-width: 21ch;
+  }
+
+  h2 :global(.u) {
+    text-decoration: underline;
+    text-decoration-color: var(--c-cta-hi);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 7px;
+    text-decoration-skip-ink: none;
+  }
+
+  .fc__text {
+    display: grid;
+    gap: 12px;
+    max-width: 54ch;
+  }
+
+  p {
+    font-size: var(--fs-lg);
+    font-style: italic;
+    line-height: 1.65;
+    color: #d6dce5;
+  }
+
+  p :global(strong) {
+    color: var(--c-cta-hi);
+    font-weight: 700;
+  }
+
+  .fc__list {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+    max-width: 520px;
+    margin-top: 8px;
+    text-align: left;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 14px;
+    align-items: start;
+    font-size: var(--fs-base);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--c-on-dark);
+  }
+
+  .tick {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background: rgb(var(--c-cta-ring) / 0.16);
+    color: var(--c-cta-hi);
+    box-shadow: inset 0 0 0 1px rgb(var(--c-cta-ring) / 0.25);
+  }
+
+  .fc__cta {
+    width: 100%;
+    max-width: 520px;
+    margin-top: 10px;
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+/**
+ * Espaço de imagem. Sem `src`, mostra um placeholder leve (só CSS).
+ * Com `src` (import de src/assets), gera <picture> AVIF/WebP responsivo e otimizado no build.
+ */
+import type { ImageMetadata } from 'astro';
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+
+interface Props {
+  src?: ImageMetadata;
+  alt: string;
+  /** Texto de orientação exibido no placeholder (ex.: "Mockup do guia · 1200×900"). */
+  hint?: string;
+  /** Proporção CSS, ex.: "4 / 3". */
+  ratio?: string;
+  /** Imagem acima da dobra: carrega com prioridade máxima (LCP). */
+  priority?: boolean;
+  sizes?: string;
+  widths?: number[];
+  tone?: 'light' | 'dark';
+  fit?: 'cover' | 'contain';
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  hint,
+  ratio = '4 / 3',
+  priority = false,
+  sizes = '(min-width: 1180px) 560px, 100vw',
+  widths = [360, 540, 720, 960, 1200],
+  tone = 'light',
+  fit = 'cover',
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['slot', `slot--${tone}`, { 'slot--empty': !src }, className]} style={`--ratio:${ratio};--fit:${fit}`}>
+  {
+    src ? (
+      <Picture
+        src={src}
+        alt={alt}
+        formats={['avif', 'webp']}
+        widths={[...widths.filter((w) => w < src.width), src.width]}
+        sizes={sizes}
+        quality={78}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        class="slot__img"
+      />
+    ) : (
+      <div class="slot__ph" role="img" aria-label={alt}>
+        <Icon name="image" size={28} stroke={1.6} />
+        {hint && <span>{hint}</span>}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .slot {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    width: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .slot :global(.slot__img),
+  .slot :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slot :global(.slot__img) {
+    object-fit: var(--fit);
+  }
+
+  .slot__ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 8px;
+    padding: 16px;
+    text-align: center;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border-radius: inherit;
+  }
+
+  .slot--light .slot__ph {
+    color: #8a94a3;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 11px, rgb(15 23 42 / 0.035) 11px 12px),
+      linear-gradient(160deg, #eef0f2, #e3e7eb);
+    box-shadow: inset 0 0 0 1px rgb(15 23 42 / 0.07);
+  }
+
+  .slot--dark .slot__ph {
+    color: rgb(255 255 255 / 0.5);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 11px, rgb(255 255 255 / 0.035) 11px 12px),
+      linear-gradient(160deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+</style>

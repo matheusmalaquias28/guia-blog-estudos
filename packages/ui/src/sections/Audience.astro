@@ -1,0 +1,74 @@
+---
+import Icon from '../components/Icon.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+interface Props {
+  title: string;
+  items: string[];
+  id?: string;
+}
+
+const { title, items, id } = Astro.props;
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <SectionHeader title={title} id={`${id}-title`} />
+    <ul class="list" role="list">
+      {
+        items.map((item) => (
+          <li class="reveal">
+            <span class="tick">
+              <Icon name="check" size={16} stroke={3} />
+            </span>
+            <span>{item}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .list {
+    display: grid;
+    gap: 14px;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 760px) {
+    .list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+  }
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 22px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--c-text-2);
+    line-height: 1.6;
+  }
+
+  .tick {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    margin-top: -1px;
+    border-radius: 50%;
+    background: var(--c-cta);
+    color: #fff;
+    box-shadow: 0 4px 10px -4px rgb(var(--c-cta-ring) / 0.7);
+  }
+</style>

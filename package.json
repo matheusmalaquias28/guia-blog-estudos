@@ -1,0 +1,11 @@
+{
+  "name": "ofertas-landing-pages",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.2.2",
+  "scripts": {
+    "dev:moto": "pnpm --filter guia-moto-usada dev",
+    "build": "pnpm -r --filter \"./landing-pages/*\" build",
+    "build:moto": "pnpm --filter guia-moto-usada build"
+  }
+}

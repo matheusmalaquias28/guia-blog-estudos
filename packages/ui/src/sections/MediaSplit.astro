@@ -1,0 +1,142 @@
+---
+import CtaButton from '../components/CtaButton.astro';
+import Icon from '../components/Icon.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import { rich } from '../lib/rich';
+import type { Cta, Img } from '../types';
+
+interface Props {
+  title: string;
+  paragraphs: string[];
+  features?: string[];
+  cta?: Cta;
+  image: Img;
+  id?: string;
+}
+
+const { title, paragraphs, features = [], cta, image, id } = Astro.props;
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container split">
+    <div class="split__media reveal">
+      <ImageSlot
+        src={image.src}
+        alt={image.alt}
+        hint={image.hint}
+        ratio="4 / 5"
+        sizes="(min-width: 1180px) 480px, (min-width: 900px) 42vw, 92vw"
+      />
+    </div>
+
+    <div class="split__copy">
+      <h2 id={`${id}-title`} class="reveal" set:html={rich(title)} />
+      {paragraphs.map((p) => <p class="lead reveal">{p}</p>)}
+
+      {
+        features.length > 0 && (
+          <ul class="feats reveal" role="list">
+            {features.map((f) => (
+              <li>
+                <span class="tick">
+                  <Icon name="check" size={16} stroke={3} />
+                </span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        cta && (
+          <div class="split__cta reveal">
+            <CtaButton href={cta.href} block>
+              {cta.label}
+            </CtaButton>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .split {
+    display: grid;
+    gap: 36px;
+    align-items: center;
+  }
+
+  .split__media {
+    max-width: min(440px, 82vw);
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .split__media :global(.slot) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .split__copy {
+    display: grid;
+    gap: 18px;
+  }
+
+  h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .lead {
+    font-size: var(--fs-lg);
+    color: var(--c-muted);
+    line-height: 1.65;
+  }
+
+  .feats {
+    display: grid;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .feats li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xs);
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    line-height: 1.45;
+  }
+
+  .tick {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--c-success-soft);
+    color: var(--c-success);
+  }
+
+  .split__cta {
+    margin-top: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .split {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(48px, 6vw, 88px);
+    }
+
+    .split__cta :global(.cta) {
+      width: auto;
+    }
+  }
+</style>

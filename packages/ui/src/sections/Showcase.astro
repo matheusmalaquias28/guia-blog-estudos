@@ -1,0 +1,104 @@
+---
+import ImageSlot from '../components/ImageSlot.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import type { Img } from '../types';
+
+interface Props {
+  title: string;
+  intro: string[];
+  images: Img[];
+  id?: string;
+}
+
+const { title, intro, images, id } = Astro.props;
+
+// Esteira infinita: o grupo base repete as imagens até ter largura maior que telas grandes;
+// o grupo é duplicado e a faixa anda exatamente -50%, então o loop não tem emenda.
+const MIN_PER_GROUP = 8;
+// Proporção das páginas: a da primeira imagem real (todas as páginas têm o mesmo formato).
+const first = images.find((i) => i.src)?.src;
+const ratio = first ? `${first.width} / ${first.height}` : '3 / 4';
+const reps = Math.max(1, Math.ceil(MIN_PER_GROUP / images.length));
+const group = Array.from({ length: reps }, () => images).flat();
+const track = [...group, ...group];
+---
+
+<section class="section section--soft showcase" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <SectionHeader title={title} intro={intro} id={`${id}-title`} />
+  </div>
+
+  <div class="marquee" style={`--dur:${group.length * 7}s`}>
+    <ul class="marquee__track" role="list">
+      {
+        track.map((img, i) => (
+          <li class="marquee__item" aria-hidden={i >= images.length ? 'true' : undefined}>
+            <ImageSlot
+              src={img.src}
+              alt={i >= images.length ? '' : img.alt}
+              hint={img.hint}
+              ratio={ratio}
+              sizes="(min-width: 900px) 400px, 300px"
+              widths={[300, 400, 600, 800]}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .showcase {
+    overflow: hidden;
+  }
+
+  .marquee {
+    --item: min(300px, 78vw);
+    --gap: 16px;
+    overflow: hidden;
+    padding-block: 6px 24px;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--dur) linear infinite;
+    will-change: transform;
+  }
+
+  /* Espaçamento por margem (não gap) para as duas metades terem largura idêntica. */
+  .marquee__item {
+    flex: none;
+    width: var(--item);
+    margin-inline-end: var(--gap);
+    padding: 8px;
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: var(--shadow-md);
+  }
+
+  .marquee__item :global(.slot) {
+    border-radius: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .marquee {
+      --item: 400px;
+      --gap: 28px;
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+    }
+  }
+</style>

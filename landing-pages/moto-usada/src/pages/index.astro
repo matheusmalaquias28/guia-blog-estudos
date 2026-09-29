@@ -1,0 +1,49 @@
+---
+import BaseLayout from '@lp/ui/layouts/BaseLayout.astro';
+import Audience from '@lp/ui/sections/Audience.astro';
+import Bonuses from '@lp/ui/sections/Bonuses.astro';
+import Comparison from '@lp/ui/sections/Comparison.astro';
+import Deliverables from '@lp/ui/sections/Deliverables.astro';
+import Faq from '@lp/ui/sections/Faq.astro';
+import FeatureCard from '@lp/ui/sections/FeatureCard.astro';
+import Footer from '@lp/ui/sections/Footer.astro';
+import Guarantee from '@lp/ui/sections/Guarantee.astro';
+import Hero from '@lp/ui/sections/Hero.astro';
+import PainBand from '@lp/ui/sections/PainBand.astro';
+import Pricing from '@lp/ui/sections/Pricing.astro';
+import ProblemGrid from '@lp/ui/sections/ProblemGrid.astro';
+import Showcase from '@lp/ui/sections/Showcase.astro';
+import Steps from '@lp/ui/sections/Steps.astro';
+import { content as c } from '../data/content';
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+  <!-- Rastreamento de métricas: no <head>, sem atraso (async), sem processamento do Astro. -->
+  <link slot="head" rel="preconnect" href="https://cashflow.mentoriaprocesso.com" />
+  <script
+    is:inline
+    slot="head"
+    src="https://cashflow.mentoriaprocesso.com/t/p.js?w=e6c733c3-10f2-4432-8d90-7f4386056d67&o=d5688944-99cd-44b9-9e33-79e152bd6827"
+    data-offer="d5688944-99cd-44b9-9e33-79e152bd6827"
+    data-nowprocket
+    data-no-minify="1"
+    data-no-optimize="1"
+    data-cfasync="false"
+    async></script>
+  <main>
+    <Hero {...c.hero} />
+    <Showcase id="demonstracao" {...c.showcase} />
+    <ProblemGrid id="problemas" {...c.problems} />
+    <Comparison id="comparativo" {...c.comparison} />
+    <FeatureCard id="facilidade" {...c.ease} />
+    <PainBand id="atencao" {...c.pain} />
+    <Audience id="para-quem" {...c.audience} />
+    <Deliverables id="o-que-recebe" {...c.deliverables} />
+    <Bonuses id="bonus" {...c.bonuses} />
+    <Pricing id="planos" {...c.pricing} />
+    <Guarantee id="garantia" {...c.guarantee} />
+    <Steps id="como-acessar" {...c.steps} />
+    <Faq id="faq" {...c.faq} />
+  </main>
+  <Footer text={c.footer} />
+</BaseLayout>
