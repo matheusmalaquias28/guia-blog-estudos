@@ -55,3 +55,4 @@ Um projeto Vercel por LP:
 4. Para mudar a identidade visual só daquela LP, sobrescreva os tokens (`--c-cta`, `--c-accent` etc.) num `<style>` global da página.
 5. Adicione um script `dev:<slug>` no `package.json` da raiz.
 "# guia-blog-estudos" 
+"# guia-blog-estudos" 
