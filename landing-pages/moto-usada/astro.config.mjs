@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
+import { lpUiHmr } from '@lp/ui/vite-hmr.mjs';
 import { site } from './src/data/site.ts';
 
 export default defineConfig({
@@ -32,5 +33,9 @@ export default defineConfig({
   ],
   image: {
     responsiveStyles: false,
+  },
+  vite: {
+    // Dev: mudanças em packages/ui sempre aparecem na hora (ver packages/ui/src/vite-hmr.mjs).
+    plugins: [lpUiHmr()],
   },
 });

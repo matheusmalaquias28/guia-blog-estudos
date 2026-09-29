@@ -19,8 +19,9 @@ export const content = {
   hero: {
     title:
       'COMPRE SUA *MOTO USADA* E FUJA DE GOLPES: O GUIA QUE TE ENSINA A AVALIAR, NEGOCIAR E ECONOMIZAR NA COMPRA',
+    // **trecho** = destaque verde
     subtitle:
-      'Um passo a passo visual e direto ao ponto para saber o que observar em uma moto usada antes de fechar negócio. Reconheça sinais de quedas, desgaste e problemas aparentes para negociar com mais segurança, mesmo sem entender de mecânica.',
+      'Um **passo a passo visual** e direto ao ponto para saber o que observar em uma moto usada antes de fechar negócio. Reconheça **sinais de quedas, desgaste e problemas aparentes** para negociar com mais segurança, **mesmo sem entender de mecânica.**',
     cta: { label: 'QUERO COMPRAR MINHA MOTO COM SEGURANÇA', href: toPlans },
     note: 'Receba o guia no seu e-mail após a confirmação do pagamento.',
     image: images.hero,

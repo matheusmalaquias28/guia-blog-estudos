@@ -29,15 +29,16 @@ const { title, subtitle, cta, note, image } = Astro.props;
         tone="dark"
         fit="contain"
         priority
-        sizes="(min-width: 1180px) 540px, (min-width: 960px) 44vw, 34vh"
+        sizes="(min-width: 1180px) 540px, (min-width: 960px) 44vw, 100vw"
         widths={[320, 480, 640, 800, 1080]}
+        quality={60}
         class={image.src ? 'hero__img' : undefined}
       />
     </div>
 
     <div class="hero__copy">
       <h1 id="hero-title" set:html={rich(title)} />
-      <p class="hero__sub">{subtitle}</p>
+      <p class="hero__sub" set:html={rich(subtitle)} />
       <div class="hero__actions">
         <CtaButton href={cta.href} block>{cta.label}</CtaButton>
         {
@@ -79,17 +80,38 @@ const { title, subtitle, cta, note, image } = Astro.props;
     gap: clamp(14px, 2.2svh, 24px);
   }
 
-  /* Mobile: a imagem tem altura limitada pela viewport para que tudo caiba na 1ª dobra. */
-  .hero__media {
-    height: clamp(140px, 32svh, 340px);
-    display: flex;
-    justify-content: center;
-  }
+  /*
+   * Mobile/tablet: a hero ocupa a tela inteira (100svh = altura visível real, sem ficar
+   * escondida atrás das barras do navegador). A imagem cresce para ocupar todo o espaço
+   * que sobra acima do texto e vai de borda a borda.
+   */
+  @media (max-width: 959px) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100svh;
+    }
 
-  .hero__media :global(.slot) {
-    height: 100%;
-    width: auto;
-    max-width: 100%;
+    .hero__grid {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero__media {
+      flex: 1 1 0;
+      min-height: 36svh;
+      margin-inline: calc(var(--gutter) * -1);
+    }
+
+    .hero__media :global(.slot) {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+    }
   }
 
   /* Imagem real (PNG recortado): sem cantos arredondados, com brilho sutil atrás. */
@@ -140,6 +162,12 @@ const { title, subtitle, cta, note, image } = Astro.props;
     margin-inline: auto;
   }
 
+  /* **trecho** no subtexto = destaque verde */
+  .hero__sub :global(strong) {
+    color: var(--c-cta-hi);
+    font-weight: 700;
+  }
+
   .hero__actions {
     display: grid;
     gap: 10px;
@@ -167,7 +195,7 @@ const { title, subtitle, cta, note, image } = Astro.props;
       padding-block: 10px 20px;
     }
     .hero__media {
-      height: clamp(110px, 22svh, 200px);
+      min-height: 26svh;
     }
     .hero__sub {
       font-size: 0.84rem;
@@ -195,7 +223,6 @@ const { title, subtitle, cta, note, image } = Astro.props;
 
     .hero__media {
       order: 2;
-      height: auto;
     }
 
     .hero__media :global(.slot) {

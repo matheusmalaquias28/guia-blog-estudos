@@ -20,6 +20,8 @@ interface Props {
   widths?: number[];
   tone?: 'light' | 'dark';
   fit?: 'cover' | 'contain';
+  /** Qualidade AVIF/WebP (1-100). */
+  quality?: number;
   class?: string;
 }
 
@@ -33,6 +35,7 @@ const {
   widths = [360, 540, 720, 960, 1200],
   tone = 'light',
   fit = 'cover',
+  quality = 78,
   class: className,
 } = Astro.props;
 ---
@@ -46,7 +49,7 @@ const {
         formats={['avif', 'webp']}
         widths={[...widths.filter((w) => w < src.width), src.width]}
         sizes={sizes}
-        quality={78}
+        quality={quality}
         loading={priority ? 'eager' : 'lazy'}
         decoding={priority ? 'sync' : 'async'}
         fetchpriority={priority ? 'high' : 'auto'}
